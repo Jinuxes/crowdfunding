@@ -124,11 +124,11 @@
         </dependency>
 
         <!-- 视频在配置spring与springMVC整合时有加这个在admin-component -->
-        <!-- <dependency> -->
-        <!--     <groupId>javax.servlet</groupId> -->
-        <!--     <artifactId>servlet-api</artifactId> -->
-        <!--     <scope>provided</scope> -->
-        <!-- </dependency> -->
+        <dependency>
+            <groupId>javax.servlet</groupId>
+            <artifactId>servlet-api</artifactId>
+            <scope>provided</scope>
+        </dependency>
     </dependencies>
 
     <artifactId>admin-component</artifactId>
