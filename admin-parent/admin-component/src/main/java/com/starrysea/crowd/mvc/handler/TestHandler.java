@@ -50,10 +50,10 @@ public class TestHandler {
 
         modelMap.addAttribute("adminList",adminList);
 
-        String a = null;
-        System.out.println(a.length());
+        // String a = null;
+        // System.out.println(a.length());
 
-        // System.out.println(10/0);
+        System.out.println(10/0);
         return "target";
     }
 }

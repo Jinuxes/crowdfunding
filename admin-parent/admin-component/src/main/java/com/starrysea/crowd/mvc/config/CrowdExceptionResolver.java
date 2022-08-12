@@ -1,6 +1,8 @@
 package com.starrysea.crowd.mvc.config;
 
 import com.google.gson.Gson;
+import com.starrysea.crowd.exception.LoginFailedException;
+import com.starrysea.crowd.util.CrowdConstant;
 import com.starrysea.crowd.util.CrowdUtil;
 import com.starrysea.crowd.util.ResultEntity;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -19,6 +21,14 @@ public class CrowdExceptionResolver {
     @ExceptionHandler(value=NullPointerException.class)
     public ModelAndView resolveNullPointerException(NullPointerException exception, HttpServletRequest request, HttpServletResponse response) throws IOException {
         return commonResolve("system-error",exception,request,response);
+    }
+
+    // 登录异常处理器
+    @ExceptionHandler(value=LoginFailedException.class)
+    public ModelAndView resolveLoginFailedException(LoginFailedException exception,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) throws IOException {
+        return commonResolve("admin-login",exception,request,response);
     }
 
     //公共代码，抽出来封装成一个方法，其它异常处理器可以直接调用
@@ -44,7 +54,7 @@ public class CrowdExceptionResolver {
         //3.如果是普通请求，则创建ModelAndView对象，返回对应错误页面
         ModelAndView modelAndView = new ModelAndView();
         //4.将Exception对象存入模型
-        modelAndView.addObject("exception", exception);
+        modelAndView.addObject(CrowdConstant.ATTR_NAME_EXCEPTION, exception);
         //5.设置对应的视图名称
         modelAndView.setViewName(viewName);
         //返回ModelAndView对象
