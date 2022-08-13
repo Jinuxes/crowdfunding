@@ -1,6 +1,7 @@
 package com.starrysea.crowd.mvc.config;
 
 import com.google.gson.Gson;
+import com.starrysea.crowd.exception.AccessForbiddenException;
 import com.starrysea.crowd.exception.LoginFailedException;
 import com.starrysea.crowd.util.CrowdConstant;
 import com.starrysea.crowd.util.CrowdUtil;
@@ -30,6 +31,19 @@ public class CrowdExceptionResolver {
                                                     HttpServletResponse response) throws IOException {
         return commonResolve("admin-login",exception,request,response);
     }
+
+    // 禁止访问异常处理器--测试用
+    /**
+     * /admin/to/main/page.html的请求已经使用了view-controller进行配置，这里这个controller没有作用，仅仅是用来
+     * 测试使用view-controller配置的映射是否能够被基于注解的异常映射处理捕获。
+     * 实测结果是：view-controller配置的映射是不能被基于注解的异常映射处理捕获的，只能被基于xml的异常映射处理捕获
+     */
+    // @ExceptionHandler(value=AccessForbiddenException.class)
+    // public ModelAndView resolveAccessForbiddenException(AccessForbiddenException exception,
+    //                                                 HttpServletRequest request,
+    //                                                 HttpServletResponse response) throws IOException {
+    //     return commonResolve("system-error",exception,request,response);
+    // }
 
     //公共代码，抽出来封装成一个方法，其它异常处理器可以直接调用
     private ModelAndView commonResolve(String viewName, Exception exception, HttpServletRequest request, HttpServletResponse response) throws IOException {

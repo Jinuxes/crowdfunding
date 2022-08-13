@@ -1,10 +1,12 @@
 package com.starrysea.crowd.mvc.handler;
 
+import com.github.pagehelper.PageInfo;
 import com.starrysea.crowd.entity.Admin;
 import com.starrysea.crowd.service.api.AdminService;
 import com.starrysea.crowd.util.CrowdConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
+import org.springframework.ui.ModelMap;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -41,4 +43,25 @@ public class AdminHandler {
 
         return "redirect:/admin/to/login/page.html";
     }
+
+    @RequestMapping("admin/get/page.html")
+    public String getPageInfo(@RequestParam(value="keyword",defaultValue="") String keyword,
+                              @RequestParam(value="pageNum",defaultValue="1") Integer pageNum,
+                              @RequestParam(value="pageSize",defaultValue="5") Integer pageSize,
+                              ModelMap modelMap){
+        PageInfo<Admin> pageInfo = adminService.getPageInfo(keyword,pageNum,pageSize);
+        // 将PageInfo对象存入模型
+        modelMap.addAttribute(CrowdConstant.ATTR_NAME_PAGE_INFO,pageInfo);
+        return "admin-page";
+    }
+
+    /**
+     * /admin/to/main/page.html的请求已经使用了view-controller进行配置，这里这个controller没有作用，仅仅是用来
+     * 测试使用view-controller配置的映射是否能够被基于注解的异常映射处理捕获。
+     * 实测结果是：view-controller配置的映射是不能被基于注解的异常映射处理捕获的，只能被基于xml的异常映射处理捕获
+     */
+    // @RequestMapping("/admin/to/main/page.html")
+    // public String toMainPage(){
+    //     return "admin-main";
+    // }
 }

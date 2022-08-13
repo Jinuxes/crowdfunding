@@ -1,5 +1,7 @@
 package com.starrysea.crowd.service.impl;
 
+import com.github.pagehelper.PageHelper;
+import com.github.pagehelper.PageInfo;
 import com.starrysea.crowd.entity.Admin;
 import com.starrysea.crowd.entity.AdminExample;
 import com.starrysea.crowd.exception.LoginFailedException;
@@ -71,5 +73,16 @@ public class AdminServiceImpl implements AdminService {
 
         // 8.如果一致则返回Admin对象
         return admin;
+    }
+
+    @Override
+    public PageInfo<Admin> getPageInfo(String keyword, Integer pageNum, Integer pageSize) {
+
+        // 1.调用PageHelper的静态方法开启分页功能。设置分页查询的页码和每一页显示的数量，这个设置好后，调用mapper层访问数据库前会调用拦截器拦截查询语句，然后加入在语句中加入limit xx xx内容
+        PageHelper.startPage(pageNum, pageSize);
+        // 2.执行查询
+        List<Admin> adminList = adminMapper.selectAdminByKeyword(keyword);
+        // 3.封装到PageInfo对象中
+        return new PageInfo<>(adminList);
     }
 }

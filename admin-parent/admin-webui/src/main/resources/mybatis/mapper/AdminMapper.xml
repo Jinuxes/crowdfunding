@@ -225,4 +225,13 @@
       create_time = #{createTime,jdbcType=CHAR}
     where id = #{id,jdbcType=INTEGER}
   </update>
+
+  <!-- 自定义sql -->
+  <select id="selectAdminByKeyword" resultMap="BaseResultMap">
+    select id, login_acct, user_pswd, user_name, email, create_time
+    from t_admin
+    where login_acct like concat("%", #{keyword}, "%") or
+          user_name like concat("%", #{keyword}, "%") or
+          email like concat("%", #{keyword}, "%")
+  </select>
 </mapper>
