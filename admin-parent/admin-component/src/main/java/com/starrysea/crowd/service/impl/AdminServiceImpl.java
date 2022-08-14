@@ -4,12 +4,17 @@ import com.github.pagehelper.PageHelper;
 import com.github.pagehelper.PageInfo;
 import com.starrysea.crowd.entity.Admin;
 import com.starrysea.crowd.entity.AdminExample;
+import com.starrysea.crowd.exception.LoginAcctAlreadyInUseException;
 import com.starrysea.crowd.exception.LoginFailedException;
 import com.starrysea.crowd.mapper.AdminMapper;
 import com.starrysea.crowd.service.api.AdminService;
 import com.starrysea.crowd.util.CrowdConstant;
 import com.starrysea.crowd.util.CrowdUtil;
+import com.starrysea.crowd.util.DateUtil;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DuplicateKeyException;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -21,9 +26,29 @@ public class AdminServiceImpl implements AdminService {
     @Autowired
     private AdminMapper adminMapper;
 
+    private Logger logger = LoggerFactory.getLogger(AdminServiceImpl.class);
+
     @Override
     public void saveAdmin(Admin admin) {
-        adminMapper.insert(admin);
+
+        // 1.密码加密
+        String password = admin.getUserPswd();
+        admin.setUserPswd(CrowdUtil.md5(password));
+
+        // 2.获取当前日期时间，并设置创建时间
+        String createTime = DateUtil.getCurrentDateTime();
+        admin.setCreateTime(createTime);
+
+        // 3.执行保存
+        try{
+            adminMapper.insert(admin);
+        }catch(Exception e){
+            // e.printStackTrace();
+            // logger.info("异常全类名="+e.getClass().getName());
+            if(e instanceof DuplicateKeyException){
+                throw new LoginAcctAlreadyInUseException(CrowdConstant.MESSAGE_LOGIN_ACT_ALREADY_IN_USE_ADD);
+            }
+        }
     }
 
     @Override
@@ -84,5 +109,29 @@ public class AdminServiceImpl implements AdminService {
         List<Admin> adminList = adminMapper.selectAdminByKeyword(keyword);
         // 3.封装到PageInfo对象中
         return new PageInfo<>(adminList);
+    }
+
+    @Override
+    public void remove(Integer adminId) {
+        adminMapper.deleteByPrimaryKey(adminId);
+    }
+
+    @Override
+    public Admin getAdminById(Integer id) {
+        return adminMapper.selectByPrimaryKey(id);
+    }
+
+    @Override
+    public void update(Admin admin) {
+
+        try{
+            //有选择的更新，对null值的属性不更新
+            adminMapper.updateByPrimaryKeySelective(admin);
+        }catch(Exception e){
+            e.printStackTrace();
+            if(e instanceof DuplicateKeyException){
+                throw new LoginAcctAlreadyInUseException(CrowdConstant.MESSAGE_LOGIN_ACT_ALREADY_IN_USE_UPDATE);
+            }
+        }
     }
 }

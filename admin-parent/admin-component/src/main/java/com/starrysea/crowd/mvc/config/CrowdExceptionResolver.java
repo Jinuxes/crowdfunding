@@ -2,6 +2,7 @@ package com.starrysea.crowd.mvc.config;
 
 import com.google.gson.Gson;
 import com.starrysea.crowd.exception.AccessForbiddenException;
+import com.starrysea.crowd.exception.LoginAcctAlreadyInUseException;
 import com.starrysea.crowd.exception.LoginFailedException;
 import com.starrysea.crowd.util.CrowdConstant;
 import com.starrysea.crowd.util.CrowdUtil;
@@ -32,12 +33,24 @@ public class CrowdExceptionResolver {
         return commonResolve("admin-login",exception,request,response);
     }
 
-    // 禁止访问异常处理器--测试用
-    /**
-     * /admin/to/main/page.html的请求已经使用了view-controller进行配置，这里这个controller没有作用，仅仅是用来
-     * 测试使用view-controller配置的映射是否能够被基于注解的异常映射处理捕获。
-     * 实测结果是：view-controller配置的映射是不能被基于注解的异常映射处理捕获的，只能被基于xml的异常映射处理捕获
-     */
+    // 新增时账号重复异常处理
+    @ExceptionHandler(value= LoginAcctAlreadyInUseException.class)
+    public ModelAndView resolveLoginAcctAlreadyInUseException(LoginAcctAlreadyInUseException exception,
+                                                    HttpServletRequest request,
+                                                    HttpServletResponse response) throws IOException {
+        String message = exception.getMessage();
+        if(message.contains("更新")){
+            return commonResolve("admin-update",exception,request,response);
+        }
+        return commonResolve("admin-add",exception,request,response);
+    }
+
+    // // 禁止访问异常处理器--测试用
+    // /**
+    //  * /admin/to/main/page.html的请求已经使用了view-controller进行配置，这里这个controller没有作用，仅仅是用来
+    //  * 测试使用view-controller配置的映射是否能够被基于注解的异常映射处理捕获。
+    //  * 实测结果是：view-controller配置的映射是不能被基于注解的异常映射处理捕获的，只能被基于xml的异常映射处理捕获
+    //  */
     // @ExceptionHandler(value=AccessForbiddenException.class)
     // public ModelAndView resolveAccessForbiddenException(AccessForbiddenException exception,
     //                                                 HttpServletRequest request,

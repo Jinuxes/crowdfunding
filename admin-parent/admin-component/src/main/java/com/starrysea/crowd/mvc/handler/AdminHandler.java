@@ -7,9 +7,11 @@ import com.starrysea.crowd.util.CrowdConstant;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 
 @Controller
@@ -44,7 +46,7 @@ public class AdminHandler {
         return "redirect:/admin/to/login/page.html";
     }
 
-    @RequestMapping("admin/get/page.html")
+    @RequestMapping("/admin/get/page.html")
     public String getPageInfo(@RequestParam(value="keyword",defaultValue="") String keyword,
                               @RequestParam(value="pageNum",defaultValue="1") Integer pageNum,
                               @RequestParam(value="pageSize",defaultValue="5") Integer pageSize,
@@ -53,6 +55,45 @@ public class AdminHandler {
         // 将PageInfo对象存入模型
         modelMap.addAttribute(CrowdConstant.ATTR_NAME_PAGE_INFO,pageInfo);
         return "admin-page";
+    }
+
+    @RequestMapping("/admin/remove/{adminId}/{pageNum}/{keyword}.html")
+    public String remove(@PathVariable("adminId") Integer adminId,
+                         @PathVariable("pageNum") Integer pageNum,
+                         @PathVariable("keyword") String keyword){
+        //执行删除
+        adminService.remove(adminId);
+
+        //页面跳转：回到分页页面
+        // return "admin-page";  //直接转发到admin-page.jsp会无法显示分页数据
+        // return "forward:/admin/get/page.html";  //转发到admin/get/page.html地址，删除后接着点刷新，一旦手动再次刷新页面会重复执行删除浪费性能
+        return "redirect:/admin/get/page.html?pageNum="+pageNum+"&keyword="+keyword;
+    }
+
+    @RequestMapping("/admin/save.html")
+    public String save(Admin admin){
+        adminService.saveAdmin(admin);
+        return "redirect:/admin/get/page.html?pageNum="+Integer.MAX_VALUE;
+    }
+
+    @RequestMapping("/admin/to/update/page.html")
+    public String getAdminById(Integer id,
+                               // ModelMap modelMap
+                               HttpServletRequest request
+                            ){
+        Admin admin = adminService.getAdminById(id);
+        // modelMap.addAttribute(CrowdConstant.ATTR_NAME_UPDATE_ADMIN,admin);
+        request.setAttribute(CrowdConstant.ATTR_NAME_UPDATE_ADMIN,admin);
+        return "admin-update";
+    }
+
+    @RequestMapping("/admin/update.html")
+    public String update(Integer pageNum,
+                         String keyword,
+                         Admin admin){
+        adminService.update(admin);
+
+        return "redirect:/admin/get/page.html?pageNum="+pageNum+"&keyword="+keyword;
     }
 
     /**
