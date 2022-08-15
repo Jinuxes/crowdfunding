@@ -5,7 +5,7 @@
   Time: 13:23
   To change this template use File | Settings | File Templates.
 --%>
-<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java"%>
 <head>
     <meta charset="UTF-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
@@ -29,10 +29,10 @@
         }
     </style>
 
-    <script type="text/javascript" src="jquery/jquery-3.6.0.min.js"></script>
+    <script type="text/javascript" src="jquery/jquery-2.1.1.min.js"></script>
     <script type="text/javascript" src="bootstrap/js/bootstrap.min.js"></script>
     <script type="text/javascript" src="script/docs.min.js"></script>
-    <script type="text/javascript" src="layer/layer.js"></script>
+    <script type="text/javascript" src="layer/layer.js" charset="UTF-8"></script>
     <script type="text/javascript">
         $(function () {
             $(".list-group-item").click(function(){

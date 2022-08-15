@@ -1,8 +1,11 @@
 package com.starrysea.crowd.test;
 
 import com.starrysea.crowd.entity.Admin;
+import com.starrysea.crowd.entity.Role;
 import com.starrysea.crowd.mapper.AdminMapper;
+import com.starrysea.crowd.mapper.RoleMapper;
 import com.starrysea.crowd.service.api.AdminService;
+import com.starrysea.crowd.service.api.RoleService;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -24,9 +27,20 @@ public class CrowdTest {
 
     @Autowired
     private AdminMapper adminMapper;
+    @Autowired
+    private RoleMapper roleMapper;
 
     @Autowired
     private AdminService adminService;
+    @Autowired
+    private RoleService roleService;
+
+    @Test
+    public void testRoleSave(){
+        for(int i=0; i<235; i++){
+            roleMapper.insert(new Role(null,"role"+i));
+        }
+    }
 
     @Test
     public void test(){
