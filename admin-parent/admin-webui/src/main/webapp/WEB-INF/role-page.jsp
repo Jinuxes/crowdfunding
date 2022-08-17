@@ -72,6 +72,54 @@
             //清理模态框
             $("#addModal [name=roleName]").val("");
         });
+
+        // 给每一行动态生成的数据的编辑按钮绑定点击事件
+        $("#rolePageBody").on("click", ".btn-primary", function(){
+            $("#editModal").modal("show");
+
+            window.roleId = this.id;
+
+            // 使用roleName的值设置模态框中的文本框
+            var roleName = $(this).parent().prev().text();
+            $("#editModal [name=roleName]").val(roleName);
+        });
+
+        // 给更新模态框中的更新按钮绑定单击响应函数
+        $("#updateRoleBtn").click(function(){
+
+            // 获取新的角色名称
+            var role = $("#editModal [name=roleName]").val();
+            $.ajax({
+                "url":"role/update.json",
+                "type":"post",
+                "dataType":"json",
+                "data":{
+                    "id":window.roleId,
+                    "name":role,
+                },
+                "success":function(response){
+                    var result = response.result;
+                    if(result == "SUCCESS"){
+                        layer.msg("操作成功！");
+
+                        //将页码定位到最后一页
+                        window.pageNum = 999999;
+
+                        //重新加载分页数据
+                        generatePage();
+                    }
+
+                    if(result == "FAILED"){
+                        layer.msg("操作失败！"+result.message);
+                    }
+                },
+                "error":function(response){
+                    layer.msg(response.status+" "+response.statusText);
+                }
+            });
+
+            $("#editModal").modal("hide");
+        });
     });
 </script>
 
@@ -127,5 +175,6 @@
 </div>
 
 <%@include file="/WEB-INF/modal-role-add.jsp"%>
+<%@include file="/WEB-INF/modal-role-edit.jsp"%>
 </body>
 </html>

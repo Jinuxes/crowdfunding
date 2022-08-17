@@ -49,6 +49,7 @@
 
         <!-- 指定数据库表名和entity类对应的映射 -->
         <!-- <table tableName="t_admin" domainObjectName="Admin"/> -->
-        <table tableName="t_role" domainObjectName="Role"/>
+        <!-- <table tableName="t_role" domainObjectName="Role"/> -->
+        <table tableName="t_menu" domainObjectName="Menu"/>
     </context>
 </generatorConfiguration>
