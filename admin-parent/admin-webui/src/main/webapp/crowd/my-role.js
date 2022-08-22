@@ -76,7 +76,7 @@ function fillTableBody(pageInfo){
         var checkboxTd = "<td><input type='checkbox'/></td>";
         var roleNameTd = "<td>"+roleName+"</td>";
 
-        var checkBtn = "<button type='button' class='btn btn-success btn-xs'><i class=' glyphicon glyphicon-check'></i></button>";
+        var checkBtn = "<button id='"+roleId+"' type='button' class='btn btn-success btn-xs checkBtn'><i class=' glyphicon glyphicon-check'></i></button>";
         var pencilBtn= "<button type='button' id='"+roleId+"' class='btn btn-primary btn-xs'><i class=' glyphicon glyphicon-pencil'></i></button>";
         var removeBtn = "<button type='button' class='btn btn-danger btn-xs'><i class=' glyphicon glyphicon-remove'></i></button>";
 
@@ -114,4 +114,86 @@ function paginationCallBack(pageIndex, jQuery){
     generatePage();
     // 取消页码超链接的默认行为
     return false;
+}
+
+// 声明专门的函数用来在分配Auth的模态框中显示Auth的树形结构数据
+function fillAuthTree(){
+    // 1.发送ajax同步请求查询Auth数据
+    var ajaxReturn = $.ajax({
+        "url":"assign/get/all/auth.json",
+        "type":"post",
+        "dataType":"json",
+        "async":false
+    });
+
+    if(ajaxReturn.status != 200){
+        layer.msg("请求处理出错！响应状态码是："+ajaxReturn.status+"说明是："+ajaxReturn.statusText);
+        return;
+    }
+
+    // 2.从响应结果中获取Auth的JSON数据
+    // 从服务器端查询到的list不再组装成树形结构，这里我们交给前端的zTree去组装。之前的菜单维护那里时服务器查询数据后，直接在服务器端组装好一个树返回。
+    var authList = ajaxReturn.responseJSON.data;
+
+    // 3.指定使用简单的JSON数据，让zTree将数据组装成树
+    var setting = {
+        "data":{
+            "simpleData":{
+                "enable":true,  // 开启简单JSON功能
+                "pIdKey":"categoryId"  // 使用categoryId属性关联父节点，不用默认的pid
+            },
+            "key":{
+                // 使用title属性显示节点名称，不用默认的name作为属性名了
+                "name":"title"
+            }
+        },
+        "check":{
+            "enable": true  // 显示树形结构前面的checkbox勾选框
+        }
+    };
+
+    // 4.生成树形结构
+    $.fn.zTree.init($("#authTreeDemo"),setting,authList);
+
+    // 调用zTreeObj对象的方法，把节点全部展开
+    var zTreeObj = $.fn.zTree.getZTreeObj("authTreeDemo");
+    zTreeObj.expandAll(true);
+
+    // 5.查询已分配的Auth的id组成的数组。同样的，为了后面的操作能按顺序进行，也是用同步的ajax请求
+    ajaxReturn = $.ajax({
+        "url":"assign/get/auth/id.json",
+        "type":"post",
+        "data":{
+            "roleId":window.roleId
+        },
+        "dataType":"json",
+        "async":false,
+    });
+
+    if(ajaxReturn.status != 200){
+        layer.msg("请求处理出错！响应状态码是："+ajaxReturn.status+"说明是："+ajaxReturn.statusText);
+        return;
+    }
+
+    // 从响应结果中获取authIdArray
+    var authIdArray = ajaxReturn.responseJSON.data;
+
+    // 6.根据authIdArray把树形结构中对应的节点勾选上
+    // 遍历authIdArray
+    for(var i=0;i<authIdArray.length;i++){
+        var authId = authIdArray[i];
+
+        // 根据id查询树形结构中对应的节点
+        var treeNode = zTreeObj.getNodeByParam("id",authId);
+
+        // checked设置为true表示节点勾选
+        var checked = true;
+
+        // checkTypeFlag设置为false，表示不”联动“，不联动是为了避免把不该勾选的勾选上
+        var checkTypeFlag = false;
+        // var checkTypeFlag = true;  //这是联动，这样会导致没有勾选的权限也会被勾选
+
+        // 将treeNode设置为被勾选
+        zTreeObj.checkNode(treeNode, checked, checkTypeFlag)
+    }
 }

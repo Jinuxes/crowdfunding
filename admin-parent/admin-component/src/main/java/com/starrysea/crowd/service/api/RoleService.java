@@ -13,4 +13,8 @@ public interface RoleService {
     public void saveRole(Role role);
 
     void updateRole(Role role);
+
+    List<Role> getAssignedRole(Integer adminId);
+
+    List<Role> getUnAssignedRole(Integer adminId);
 }

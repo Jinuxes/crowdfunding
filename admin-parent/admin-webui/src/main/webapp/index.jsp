@@ -54,5 +54,6 @@
     <button id="btn1">测试ResultEntity</button>
     <br/>
     <button id="btn2">点我弹框</button>
+    <a href="admin/to/login/page.html">登录页面</a>
   </body>
 </html>

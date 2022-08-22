@@ -57,4 +57,26 @@ public class MenuHandler {
         System.out.println(root);
         return ResultEntity.successWithData(root);
     }
+
+    @RequestMapping("/menu/save.json")
+    @ResponseBody
+    public ResultEntity<Menu> saveMenu(Menu menu){
+        menuService.saveMenu(menu);
+
+        return ResultEntity.successWithoutData();
+    }
+
+    @RequestMapping("/menu/update.json")
+    @ResponseBody
+    public ResultEntity<Menu> updateMenu(Menu menu){
+        menuService.updateMenu(menu);
+        return ResultEntity.successWithoutData();
+    }
+
+    @RequestMapping("/menu/remove.json")
+    @ResponseBody
+    public ResultEntity<Menu> removeMenu(Integer id){
+        menuService.removeMenu(id);
+        return ResultEntity.successWithoutData();
+    }
 }
