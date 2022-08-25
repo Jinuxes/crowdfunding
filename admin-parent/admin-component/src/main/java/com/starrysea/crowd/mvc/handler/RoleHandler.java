@@ -5,6 +5,7 @@ import com.starrysea.crowd.entity.Role;
 import com.starrysea.crowd.service.api.RoleService;
 import com.starrysea.crowd.util.ResultEntity;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -16,6 +17,7 @@ public class RoleHandler {
     @Autowired
     private RoleService roleService;
 
+    @PreAuthorize("hasRole('部长')")
     @RequestMapping("/role/get/page/info.json")
     @ResponseBody
     public ResultEntity<PageInfo<Role>> getPageInfo(

@@ -209,4 +209,12 @@
       (#{authId},#{roleId})
     </foreach>
   </insert>
+
+  <select id="selectAssignedAuthIdByAdminId" resultType="string">
+    SELECT DISTINCT t_auth.name FROM t_auth
+    LEFT JOIN inner_role_auth ON t_auth.id=inner_role_auth.auth_id
+    LEFT JOIN inner_admin_role ON inner_role_auth.role_id=inner_admin_role.role_id
+    WHERE inner_admin_role.admin_id=#{adminId}
+    AND t_auth.name != "" AND t_auth.name IS NOT NULL;
+  </select>
 </mapper>

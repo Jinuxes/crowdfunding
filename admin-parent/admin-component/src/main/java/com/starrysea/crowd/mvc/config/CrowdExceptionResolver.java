@@ -7,6 +7,7 @@ import com.starrysea.crowd.exception.LoginFailedException;
 import com.starrysea.crowd.util.CrowdConstant;
 import com.starrysea.crowd.util.CrowdUtil;
 import com.starrysea.crowd.util.ResultEntity;
+import org.springframework.security.access.AccessDeniedException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.servlet.ModelAndView;
@@ -43,6 +44,14 @@ public class CrowdExceptionResolver {
             return commonResolve("admin-update",exception,request,response);
         }
         return commonResolve("admin-add",exception,request,response);
+    }
+
+    //基于SpringSecurity的禁止访问异常处理
+    @ExceptionHandler(value= AccessDeniedException.class)
+    public ModelAndView resolveAccessDeniedException(AccessDeniedException exception,
+                                                     HttpServletRequest request,
+                                                     HttpServletResponse response) throws IOException {
+        return commonResolve("system-error",exception,request,response);
     }
 
     // // 禁止访问异常处理器--测试用
